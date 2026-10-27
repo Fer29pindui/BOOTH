@@ -240,6 +240,41 @@ font-size: 14px;
 font-weight: 700;
 word-break: break-word;
 }
+.album-gallery {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 12px;
+margin-top: 24px;
+}
+
+.album-photo {
+position: relative;
+aspect-ratio: 1 / 1;
+overflow: hidden;
+border-radius: var(--radius-md);
+background: var(--surface);
+border: 1px solid var(--border);
+box-shadow: var(--shadow);
+}
+
+.album-photo img {
+width: 100%;
+height: 100%;
+display: block;
+object-fit: cover;
+}
+
+.empty-album {
+grid-column: 1 / -1;
+padding: 28px 18px;
+border-radius: var(--radius-md);
+background: var(--surface);
+border: 1px dashed var(--border);
+color: var(--muted);
+text-align: center;
+line-height: 1.5;
+}
+
 .album-card {
 margin-top: 24px;
 background: var(--surface);
@@ -458,14 +493,19 @@ Volver a las instrucciones
 <p class="lead">
 Aquí aparecerán las fotos y videos que los invitados vayan creando durante el evento.
 </p>
+<div class="album-gallery" id="album-gallery">
+  <div class="empty-album" id="empty-album">
+    Todavía no hay fotos cargadas en esta prueba.
+  </div>
+</div>
+
 <div class="album-card">
-<div class="album-icon">📷</div>
-<h3>El álbum está creciendo</h3>
-<p>
-En la versión final, desde aquí podrán ver los recuerdos organizados
-por las distintas etapas de la boda.
-</p>
-<span class="counter">18 recuerdos · ejemplo</span>
+  <div class="album-icon">📷</div>
+  <h3>El álbum está creciendo</h3>
+  <p>
+    Las selfies que subas durante esta prueba aparecerán aquí.
+  </p>
+  <span class="counter" id="album-counter">0 recuerdos</span>
 </div>
 <div class="actions">
 <button class="btn btn-primary" type="button" onclick="goToScreen('mision')">
@@ -510,6 +550,7 @@ mision: document.getElementById('nav-mision'),
 album: document.getElementById('nav-album')
 };
 let selectedSelfie = null;
+let albumPhotos = [];
 let toastTimer;
 function goToScreen(screenName) {
 Object.values(screens).forEach(screen => screen.classList.remove('active'));
@@ -532,14 +573,59 @@ fileText.textContent = `Foto seleccionada: ${file.name}`;
 fileText.style.display = 'block';
 }
 function uploadSelfie() {
-if (!selectedSelfie) {
-showToast('Primero selecciona la selfie que se tomaron juntos.');
-return;
+  if (!selectedSelfie) {
+    showToast('Primero selecciona la selfie que se tomaron juntos.');
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    albumPhotos.unshift(event.target.result);
+    renderAlbum();
+
+    selectedSelfie = null;
+    document.getElementById('selfie-input').value = '';
+
+    const fileText = document.getElementById('selected-file');
+    fileText.style.display = 'none';
+    fileText.textContent = '';
+
+    showToast('Selfie añadida al álbum.');
+
+    setTimeout(() => {
+      goToScreen('album');
+    }, 500);
+  };
+
+  reader.readAsDataURL(selectedSelfie);
 }
-showToast('Selfie lista. En la versión final se guardará en el álbum.');
-setTimeout(() => {
-goToScreen('album');
-}, 900);
+
+function renderAlbum() {
+  const gallery = document.getElementById('album-gallery');
+  const counter = document.getElementById('album-counter');
+
+  gallery.innerHTML = '';
+
+  if (albumPhotos.length === 0) {
+    gallery.innerHTML = '<div class="empty-album">Todavía no hay fotos cargadas en esta prueba.</div>';
+  } else {
+    albumPhotos.forEach((src, index) => {
+      const item = document.createElement('div');
+      item.className = 'album-photo';
+
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'Recuerdo ' + (albumPhotos.length - index);
+
+      item.appendChild(img);
+      gallery.appendChild(item);
+    });
+  }
+
+  counter.textContent = albumPhotos.length === 1
+    ? '1 recuerdo'
+    : albumPhotos.length + ' recuerdos';
 }
 function showToast(message) {
 const toast = document.getElementById('toast');
