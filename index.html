@@ -48,8 +48,13 @@ padding-bottom: 96px;
 position: sticky;
 top: 0;
 z-index: 30;
-padding: 12px 22px 10px;
-text-align: center;
+display: flex;
+align-items: center;
+justify-content: flex-start;
+gap: 12px;
+padding: 8px 14px;
+min-height: 68px;
+text-align: left;
 background: rgba(241, 211, 188, 0.96);
 backdrop-filter: blur(12px);
 -webkit-backdrop-filter: blur(12px);
@@ -57,10 +62,17 @@ border-bottom: 1px solid var(--border);
 }
 .brand-logo {
 display: block;
-width: min(240px, 64vw);
+width: 100px;
+max-width: 30vw;
+max-height: 48px;
 height: auto;
-margin: 0 auto 8px;
 object-fit: contain;
+flex-shrink: 0;
+}
+.topbar .event-name {
+flex: 1;
+font-size: 11px;
+letter-spacing: 1px;
 }
 
 .event-name {
