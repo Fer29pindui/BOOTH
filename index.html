@@ -45,9 +45,24 @@ position: relative;
 padding-bottom: 96px;
 }
 .topbar {
-padding: 22px 22px 6px;
+position: sticky;
+top: 0;
+z-index: 30;
+padding: 12px 22px 10px;
 text-align: center;
+background: rgba(241, 211, 188, 0.96);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border-bottom: 1px solid var(--border);
 }
+.brand-logo {
+display: block;
+width: min(240px, 64vw);
+height: auto;
+margin: 0 auto 8px;
+object-fit: contain;
+}
+
 .event-name {
 margin: 0;
 font-size: 12px;
@@ -382,6 +397,7 @@ border-radius: 0 0 28px 28px;
 <body>
 <main class="app-shell">
 <header class="topbar">
+<img class="brand-logo" src="farracam-logo.png" alt="FarraCam - La experiencia que mueve tu evento" />
 <p class="event-name">Boda Ana & Xavier</p>
 </header>
 <section class="screen hero active" id="screen-inicio">
